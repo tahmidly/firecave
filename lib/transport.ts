@@ -85,13 +85,14 @@ function makeRemoteApi(): LocalClawApi {
         delay = 500;
         if (!first) emitSync({ kind: "resync" });
         first = false;
-        const reader = r.body.pipeThrough(new TextDecoderStream()).getReader();
+        const reader = r.body.getReader();
+        const decoder = new TextDecoder();
         let buf = "";
         for (;;) {
           const { value, done } = await reader.read();
           if (done) break;
           arm();
-          buf += value;
+          buf += decoder.decode(value, { stream: true });
           let i: number;
           while ((i = buf.indexOf("\n\n")) >= 0) {
             const chunk = buf.slice(0, i);

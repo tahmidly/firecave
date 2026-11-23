@@ -1,6 +1,6 @@
 {
   "name": "localclaw",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Firecave: a local desktop home for your AI coding CLIs",
   "main": "dist-electron/main.js",
   "scripts": {

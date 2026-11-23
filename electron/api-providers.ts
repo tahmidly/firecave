@@ -88,12 +88,14 @@ type Turn = { role: "user" | "assistant"; text: string };
 
 /** Read a Server-Sent Events body and hand each JSON "data:" payload to onData. */
 async function readSse(body: ReadableStream<Uint8Array>, onData: (d: Record<string, unknown>) => void) {
-  const reader = body.pipeThrough(new TextDecoderStream()).getReader();
+  // Decode by hand: TextDecoderStream's typings don't line up with fetch bodies in this TypeScript version.
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
   let buf = "";
   for (;;) {
     const { value, done } = await reader.read();
     if (done) break;
-    buf += value;
+    buf += decoder.decode(value, { stream: true });
     let i: number;
     while ((i = buf.indexOf("\n")) >= 0) {
       const line = buf.slice(0, i).trim();
