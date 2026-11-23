@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+dist-electron
+*.tsbuildinfo
+next-env.d.ts
+release
+tsconfig.tsbuildinfo
+.env*
+*.log

@@ -1,0 +1,304 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Fonts used by opencode, bundled locally (Inter and IBM Plex Mono, SIL Open Font License). */
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Text.woff2") format("woff2");
+  font-weight: 100 599;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Bold.woff2") format("woff2");
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --font-sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: "IBM Plex Mono", "Cascadia Code", Consolas, monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-deep: var(--deep);
+  --color-btn-neutral: var(--btn-neutral);
+  --color-contrast: var(--contrast);
+  --color-contrast-foreground: var(--contrast-fg);
+  --color-layer-4: var(--layer-4);
+  --shadow-btn: var(--elev-btn);
+  --shadow-btn-contrast: var(--elev-btn-contrast);
+  --color-faint: var(--faint);
+  --color-layer-1: var(--layer-1);
+  --color-layer-2: var(--layer-2);
+  --shadow-raised: var(--elev-raised);
+  --shadow-floating: var(--elev-floating);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Firecave violet theme. Structure and layering adapted from opencode (MIT, see THIRD_PARTY_NOTICES.md): neutral greys, blue accent,
+   a deep app background with raised rounded cards on top, and 0.5px alpha rings instead of hard borders. */
+:root {
+  --deep: #f6f3fd;
+  --background: #ffffff;
+  --foreground: #1c1530;
+  --card: #ffffff;
+  --card-foreground: #1c1530;
+  --popover: #ffffff;
+  --popover-foreground: #1c1530;
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --secondary: #efe9fb;
+  --secondary-foreground: #1c1530;
+  --muted: #efe9fb;
+  --muted-foreground: #5d5577;
+  --faint: #8a82a6;
+  --accent: #5b21b60d;
+  --accent-foreground: #1c1530;
+  --destructive: #b82d35;
+  --success: #198b43;
+  --warning: #cb9f34;
+  --border: #3b1d7a1a;
+  --input: #3b1d7a1a;
+  --ring: #a78bfa;
+  --radius: 0.5rem;
+  --sidebar: #f6f3fd;
+  --sidebar-foreground: #1c1530;
+  --sidebar-primary: #7c3aed;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #5b21b60f;
+  --sidebar-accent-foreground: #1c1530;
+  --sidebar-border: #3b1d7a14;
+  --sidebar-ring: #a78bfa;
+  --layer-1: #faf8ff;
+  --layer-2: #eee8fb;
+  --elev-raised: 0 2px 4px #2a1a5e0a, 0 1px 2px -1px #2a1a5e14, 0 0 0 0.5px #2a1a5e1f;
+  --elev-floating: 0 8px 16px #2a1a5e0f, 0 4px 8px #2a1a5e14, 0 0 0 0.5px #2a1a5e24;
+  --btn-neutral: #ffffff;
+  --contrast: #2a1d4f;
+  --contrast-fg: #ffffff;
+  --layer-4: #d8cff1;
+  --elev-btn: 0 1px 1.5px #2a1a5e1a, 0 0 0 0.5px #2a1a5e24;
+  --elev-btn-contrast: 0 1px 1.5px #00000033, 0 0 0 0.5px #3a3a3a, inset 0 1px 2px #ffffff24, inset 0 -1px 2px #0000000f;
+  --elev-switch-off: inset 0 1px 1px #00000014, inset 0 0.5px 0.5px #00000014, inset 0 0 0 0.5px #0000001a;
+  --elev-switch-on: inset 0 2px 2px #0000001a, inset 0 1px 1px #0000001a, inset 0 0 0 0.5px #00000033;
+  --diff-add-bg: #e3fae1;
+  --diff-add-fg: #3a8437;
+  --diff-del-bg: #feefeb;
+  --diff-del-fg: #ed4831;
+
+  --hl-fg: #2e2e2e;
+  --hl-comment: #808080;
+  --hl-keyword: #7c3aed;
+  --hl-string: #198b43;
+  --hl-number: #a8641a;
+  --hl-title: #2563eb;
+  --hl-type: #c026d3;
+}
+
+.dark {
+  --deep: #0c0a14;
+  --background: #15121f;
+  --foreground: #f3f0fb;
+  --card: #15121f;
+  --card-foreground: #f3f0fb;
+  --popover: #201b31;
+  --popover-foreground: #f3f0fb;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: #2a2440;
+  --secondary-foreground: #f3f0fb;
+  --muted: #211c33;
+  --muted-foreground: #b2a9cc;
+  --faint: #847ba3;
+  --accent: #c4b5fd14;
+  --accent-foreground: #f3f0fb;
+  --destructive: #f17471;
+  --success: #6bd586;
+  --warning: #f2cf76;
+  --border: #c4b5fd1f;
+  --input: #c4b5fd1f;
+  --ring: #a78bfa;
+  --sidebar: #0c0a14;
+  --sidebar-foreground: #f3f0fb;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #c4b5fd14;
+  --sidebar-accent-foreground: #f3f0fb;
+  --sidebar-border: #c4b5fd17;
+  --sidebar-ring: #a78bfa;
+  --layer-1: #1d1830;
+  --layer-2: #29223f;
+  --elev-raised: 0 2px 6px #00000059, 0 0 0 0.5px #c4b5fd26;
+  --elev-floating: 0 8px 20px #00000073, 0 4px 8px #00000059, 0 0 0 0.5px #c4b5fd2e;
+  --btn-neutral: #c4b5fd14;
+  --contrast: #6d5aa8;
+  --contrast-fg: #ffffff;
+  --layer-4: #4b4170;
+  --elev-btn: 0 1px 2px #00000066, 0 0 0 0.5px #c4b5fd33, 0 -0.5px 0 #ffffff1a;
+  --elev-btn-contrast: 0 1px 2px #00000066, 0 0 0 0.5px #ffffff66, 0 -0.5px 0 #ffffff4d;
+  --elev-switch-off: inset 0 -0.5px 0 #ffffff1a, inset 0 0 0 0.5px #ffffff29;
+  --elev-switch-on: inset 0 -0.5px 0 #ffffff1a, inset 0 0 0 0.5px #ffffff29;
+  --diff-add-bg: #1a2919;
+  --diff-add-fg: #9bcd97;
+  --diff-del-bg: #42120b;
+  --diff-del-fg: #fc533a;
+
+  --hl-fg: #e6e6e6;
+  --hl-comment: #808080;
+  --hl-keyword: #c4a7ff;
+  --hl-string: #9bcd97;
+  --hl-number: #f2cf76;
+  --hl-title: #93b4ff;
+  --hl-type: #f0abfc;
+}
+
+@layer base {
+  b, strong, th, h1, h2, h3, h4, .font-medium { font-weight: 530; }
+  .font-semibold, .font-bold { font-weight: 670; }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body {
+    height: 100%;
+    @apply bg-deep text-foreground font-sans antialiased;
+    font-size: 14px;
+    font-weight: 440;
+    line-height: 150%;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 35%, transparent);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--foreground) 14%, transparent);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklch, var(--foreground) 26%, transparent);
+}
+
+/* Markdown */
+.md { font-size: 0.95rem; line-height: 1.7; }
+.md > :first-child { margin-top: 0; }
+.md > :last-child { margin-bottom: 0; }
+.md p { margin: 0.7em 0; }
+.md ul { list-style: disc; padding-left: 1.4em; margin: 0.7em 0; }
+.md ol { list-style: decimal; padding-left: 1.4em; margin: 0.7em 0; }
+.md li { margin: 0.25em 0; }
+.md h1, .md h2, .md h3, .md h4 { font-weight: 600; margin: 1.3em 0 0.5em; line-height: 1.3; }
+.md h1 { font-size: 1.4em; } .md h2 { font-size: 1.2em; } .md h3 { font-size: 1.05em; }
+.md hr { border: 0; border-top: 1px solid var(--border); margin: 1.4em 0; }
+.md strong { font-weight: 600; }
+.md code:not(pre code) {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.1em 0.38em;
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+.md pre code { font-family: var(--font-mono); background: transparent; padding: 0; color: var(--hl-fg); }
+.md blockquote { border-left: 3px solid var(--primary); padding-left: 0.95em; color: var(--muted-foreground); margin: 0.9em 0; }
+.md table { border-collapse: collapse; margin: 0.9em 0; font-size: 0.9em; display: block; overflow-x: auto; }
+.md th, .md td { border: 1px solid var(--border); padding: 0.4em 0.8em; }
+.md th { background: var(--muted); text-align: left; font-weight: 600; }
+
+.hljs { color: var(--hl-fg); }
+.hljs-comment, .hljs-quote { color: var(--hl-comment); font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-built_in, .hljs-doctag { color: var(--hl-keyword); }
+.hljs-string, .hljs-regexp, .hljs-addition, .hljs-attribute { color: var(--hl-string); }
+.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-meta { color: var(--hl-number); }
+.hljs-title, .hljs-section, .hljs-function .hljs-title, .hljs-name { color: var(--hl-title); }
+.hljs-type, .hljs-class .hljs-title, .hljs-variable, .hljs-template-variable, .hljs-attr { color: var(--hl-type); }
+.hljs-deletion { color: var(--destructive); }
+
+@keyframes blink { 50% { opacity: 0; } }
+.cursor-blink { animation: blink 1s steps(2) infinite; }
+
+/* opencode-style text shimmer for the working indicator */
+@keyframes shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+.shimmer {
+  background: linear-gradient(90deg, var(--faint) 35%, var(--foreground) 50%, var(--faint) 65%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 1.6s linear infinite;
+}
+
+.md pre code, pre { font-variant-ligatures: none; font-feature-settings: "calt" 0; }
+
+/* Send / stop button: opencode's gradient-highlight construction, in Firecave violet. */
+.btn-submit {
+  --submit-base: #7c3aed;
+  --submit-highlight: #ffffff40;
+  --submit-hover: #ffffff1a;
+  background-image: linear-gradient(180deg, var(--submit-highlight) 0%, #ffffff00 100%), linear-gradient(90deg, var(--submit-base), var(--submit-base));
+  color: #ffffff;
+  box-shadow: 0 1px 2px #3b0f8c4d, 0 0 0 0.5px #5b21b6, inset 0 1px 1px #ffffff33;
+}
+.dark .btn-submit {
+  --submit-base: #8b5cf6;
+  box-shadow: 0 1px 2px #00000080, 0 0 0 0.5px #c4b5fd59, inset 0 1px 1px #ffffff33;
+}
+@media (hover: hover) {
+  .btn-submit:hover:not(:disabled) {
+    background-image: linear-gradient(90deg, var(--submit-hover), var(--submit-hover)), linear-gradient(180deg, var(--submit-highlight) 0%, #ffffff00 100%), linear-gradient(90deg, var(--submit-base), var(--submit-base));
+  }
+}
+.btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
