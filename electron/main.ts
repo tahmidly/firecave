@@ -1,5 +1,6 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, net, protocol, shell } from "electron";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, statSync } from "node:fs";
 import { cancelAll, cancelRun, getStatus, providersStatus, startRun } from "./claude";
@@ -13,6 +14,8 @@ const REMOTE_DEFAULT: RemoteConfig = { enabled: false, access: "lan", port: 3777
 const SETTING_KEYS = new Set(["permissionMode", "defaultDir", "defaultModel", "providersEnabled"]);
 
 const DEV = process.env.LOCALCLAW_DEV === "1";
+
+protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
 /**
  * Apps opened from the macOS Finder/Dock get a minimal PATH (no Homebrew, nvm or npm-global), so the claude and
@@ -44,7 +47,7 @@ function createWindow() {
     // Frameless with native window controls: traffic lights on macOS, min/max/close overlay on Windows.
     ...(process.platform === "darwin"
       ? { titleBarStyle: "hiddenInset" as const, trafficLightPosition: { x: 14, y: 14 } }
-      : { titleBarStyle: "hidden" as const, titleBarOverlay: { color: "#00000000", symbolColor: "#b2a9cc", height: 40 } }),
+      : { titleBarStyle: "hidden" as const, titleBarOverlay: { color: "#0c0a14", symbolColor: "#b2a9cc", height: 40 } }),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -55,7 +58,7 @@ function createWindow() {
   win.setMenuBarVisibility(false);
 
   if (DEV) win.loadURL("http://localhost:3210");
-  else win.loadFile(path.join(__dirname, "..", "out", "index.html"));
+  else win.loadURL("app://firecave/");
 
   // Never let the renderer navigate away or open arbitrary windows.
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -63,7 +66,7 @@ function createWindow() {
     return { action: "deny" };
   });
   win.webContents.on("will-navigate", (e, url) => {
-    if (!url.startsWith("http://localhost:3210") && !url.startsWith("file://")) e.preventDefault();
+    if (!url.startsWith("http://localhost:3210") && !url.startsWith("app://firecave/")) e.preventDefault();
   });
 }
 
@@ -272,13 +275,26 @@ async function applyRemote(): Promise<void> {
 }
 
 app.whenReady().then(async () => {
+  // Serve the static export from app://firecave/ so its absolute /_next/... paths resolve (file:// breaks them).
+  const outDir = path.join(__dirname, "..", "out");
+  protocol.handle("app", (req) => {
+    let rel = decodeURIComponent(new URL(req.url).pathname).replace(/^\/+/, "");
+    if (!rel || rel.endsWith("/")) rel += "index.html";
+    let file = path.normalize(path.join(outDir, rel));
+    if (!file.startsWith(outDir)) return new Response("Forbidden", { status: 403 });
+    if (!existsSync(file) && existsSync(file + ".html")) file += ".html";
+    if (!existsSync(file)) file = path.join(outDir, "index.html");
+    return net.fetch(pathToFileURL(file).toString());
+  });
+
   for (const root of knownProjectRoots()) approveRoot(root);
   for (const [ch, fn] of Object.entries(handlers)) ipcMain.handle(ch, (_e, ...args) => fn(...args));
 
   ipcMain.handle("window:theme", (_e, dark: boolean) => {
     if (!win || process.platform !== "win32") return;
     win.setBackgroundColor(dark ? "#0c0a14" : "#f6f3fd");
-    win.setTitleBarOverlay({ color: "#00000000", symbolColor: dark ? "#b2a9cc" : "#5d5577", height: 40 });
+    // Opaque colour on purpose: a fully transparent overlay colour makes Electron close the window.
+    win.setTitleBarOverlay({ color: dark ? "#0c0a14" : "#f6f3fd", symbolColor: dark ? "#b2a9cc" : "#5d5577", height: 40 });
   });
 
   // Remote-control management is desktop-only (IPC), never reachable over HTTP.
